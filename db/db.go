@@ -11,9 +11,11 @@ import (
 )
 
 func NewDB() *gorm.DB {
-	err := godotenv.Load()
-	if err != nil {
-			log.Fatalln(err)
+	if os.Getenv("GO_ENV") == "dev"{
+		err := godotenv.Load()
+		if err != nil {
+				log.Fatalln(err)
+		}
 	}
 	//DBに接続するためのURLをを作成
 	//https://gorm.io/ja_JP/docs/connecting_to_the_database.html#PostgreSQL
