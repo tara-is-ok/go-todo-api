@@ -7,6 +7,8 @@ import (
 )
 
 type IUserRepository interface {
+	//引数としてポインタ型を取ることで、関数内でユーザー情報を更新出来る
+	//DBから取得したユーザー情報を、引数に渡されたポインタ型の変数に書き込む
 	GetUserByEmail(user *models.User, email string) error
 	CreateUser(user *models.User) error
 }

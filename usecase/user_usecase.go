@@ -11,6 +11,7 @@ import (
 )
 
 type IUserUsecase interface {
+	//値型(models.User)を取ることで、このメソッド内で新しいユーザー情報を変更し、データベースに挿入
 	SignUp(user models.User) (models.UserResponse,error)
 	Login(user models.User)(string, error) //JWTトークンを返す
 }
@@ -43,7 +44,7 @@ func (uu *userUsecase)SignUp(user models.User)(models.UserResponse,error){
 func (uu *userUsecase) Login(user models.User)(string, error){
 	//clientからくるemailがdbに存在するか確認する
 	storedUser := models.User{}
-	if err := uu.ur.GetUserByEmail(&storedUser,user.Email); err != nil{
+	if err := uu.ur.GetUserByEmail(&storedUser, user.Email); err != nil{
 		return "", err
 	}
 	//パスワードの一致確認
