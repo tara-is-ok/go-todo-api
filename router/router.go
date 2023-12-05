@@ -28,7 +28,6 @@ func NewRouter(uc controller.IUserController, tc controller.ITodoController) *ec
 		CookieDomain: os.Getenv("API_DOMAIN"),
 		CookieHTTPOnly: true,
 		//postmanなどで動作確認をする際にfalseにする必要になる
-		//自動的にsecure modeがtrueとなるため一時的にコメントアウト
 		CookieSameSite:http.SameSiteNoneMode ,
 		// CookieSameSite: http.SameSiteDefaultMode,
 		//有効期限
