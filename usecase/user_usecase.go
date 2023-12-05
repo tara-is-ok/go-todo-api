@@ -3,6 +3,7 @@ package usecase
 import (
 	"go-todo-api/models"
 	"go-todo-api/repository"
+	"go-todo-api/validator"
 	"os"
 	"time"
 
@@ -18,13 +19,17 @@ type IUserUsecase interface {
 
 type userUsecase struct {
 	ur repository.IUserRepository
+	uv validator.IUserValidator
 }
 
-func NewUserUsecase(ur repository.IUserRepository) IUserUsecase{
-	return &userUsecase{ur}
+func NewUserUsecase(ur repository.IUserRepository, uv validator.IUserValidator) IUserUsecase{
+	return &userUsecase{ur, uv}
 }
 
 func (uu *userUsecase)SignUp(user models.User)(models.UserResponse,error){
+	if err := uu.uv.UserValidate(user); err != nil {
+		return models.UserResponse{}, err
+	}
 	//パスワードをハッシュ化
 	hash, err := 	bcrypt.GenerateFromPassword([]byte(user.Password),10) //第2引数は暗号の複雑さ
 	if err != nil {
@@ -42,6 +47,9 @@ func (uu *userUsecase)SignUp(user models.User)(models.UserResponse,error){
 }
 
 func (uu *userUsecase) Login(user models.User)(string, error){
+	if err := uu.uv.UserValidate(user); err != nil {
+		return "", err
+	}
 	//clientからくるemailがdbに存在するか確認する
 	storedUser := models.User{}
 	if err := uu.ur.GetUserByEmail(&storedUser, user.Email); err != nil{
