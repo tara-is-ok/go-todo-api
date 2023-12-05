@@ -57,6 +57,10 @@ func (tu *todoUsecase) GetTodoById(userId uint, todoId uint) (models.TodoRespons
 }
 
 func (tu *todoUsecase) CreateTodo(todo models.Todo) (models.TodoResponse, error){
+	if err := tu.tv.TodoValidate(todo); err != nil {
+		return models.TodoResponse{}, err
+	}
+
 	if err := tu.tr.CreateTodo(&todo); err != nil {
 		return models.TodoResponse{}, err
 	}
