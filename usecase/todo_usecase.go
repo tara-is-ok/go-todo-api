@@ -3,6 +3,7 @@ package usecase
 import (
 	"go-todo-api/models"
 	"go-todo-api/repository"
+	"go-todo-api/validator"
 )
 
 
@@ -16,10 +17,11 @@ type ITodoUsecase interface {
 
 type todoUsecase struct {
 	tr repository.ITodoRepository
+	tv validator.ITodoValidator
 }
 
-func NewTodoUsecase(tr repository.ITodoRepository) ITodoUsecase {
-	return &todoUsecase{tr}
+func NewTodoUsecase(tr repository.ITodoRepository, tv validator.ITodoValidator) ITodoUsecase {
+	return &todoUsecase{tr, tv}
 }
 
 func (tu *todoUsecase) GetAllTodos(userId uint) ([]models.TodoResponse, error) {
