@@ -12,18 +12,17 @@ import (
 
 type IUserController interface {
 	SignUp(c echo.Context) error
-	Login(c echo.Context) error
-	Logout(c echo.Context) error
+	SignIn(c echo.Context) error
+	SignOut(c echo.Context) error
 	CsrfToken(c echo.Context) error
 }
 
 type userController struct {
 	uu usecase.IUserUsecase
-	
 }
 
-//usecaseの依存関係をcontrollerに注入
-func NewUserController(uu usecase.IUserUsecase) IUserController{
+// usecaseの依存関係をcontrollerに注入
+func NewUserController(uu usecase.IUserUsecase) IUserController {
 	return &userController{uu}
 }
 
@@ -31,22 +30,22 @@ func (uc *userController) SignUp(c echo.Context) error {
 	user := models.User{}
 	//c.Bind() メソッドはHTTPリクエストのボディデータを受け取り、指定した構造体にデータを関連付けます。
 	//HTTPリクエストから送信されたデータをプログラム内のデータ構造にコピーする作業
-	if err := c.Bind(&user); err != nil{
+	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	userRes, err := uc.uu.SignUp(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError,err.Error())
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusCreated,userRes)
+	return c.JSON(http.StatusCreated, userRes)
 }
 
-func (uc *userController) Login(c echo.Context) error {
+func (uc *userController) SignIn(c echo.Context) error {
 	user := models.User{}
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	tokenString, err := uc.uu.Login(user)
+	tokenString, err := uc.uu.SignIn(user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -64,7 +63,7 @@ func (uc *userController) Login(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (uc *userController) Logout(c echo.Context) error {
+func (uc *userController) SignOut(c echo.Context) error {
 	cookie := new(http.Cookie)
 	cookie.Name = "token"
 	cookie.Value = ""
