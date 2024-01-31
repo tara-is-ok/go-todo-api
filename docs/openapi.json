@@ -243,6 +243,18 @@
                   "title": {
                     "type": "string",
                     "example": "new todo"
+                  },
+                  "tagName": {
+                    "type": "array",
+                    "x-stoplight": {
+                      "id": "8jyfj2coe4xhq"
+                    },
+                    "items": {
+                      "x-stoplight": {
+                        "id": "zi062cdo9ex2f"
+                      },
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -564,13 +576,14 @@
             "x-stoplight": {
               "id": "uptcbp635grtk"
             },
-            "minItems": "",
+            "minItems": 0,
             "uniqueItems": true,
             "items": {
               "$ref": "#/components/schemas/Tag"
             }
           }
-        }
+        },
+        "title": ""
       },
       "Tag": {
         "title": "Tag",
