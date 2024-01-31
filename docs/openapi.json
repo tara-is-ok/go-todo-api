@@ -222,7 +222,7 @@
                     "type": "string",
                     "example": "new todo"
                   },
-                  "tagName": {
+                  "tags": {
                     "type": "array",
                     "x-stoplight": {
                       "id": "8jyfj2coe4xhq"

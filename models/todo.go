@@ -9,6 +9,7 @@ type Todo struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	User      User      `json:"user" gorm:"foreignKey:UserId; constraint:OnDelete:CASCADE"` //ユーザーを削除したときに紐ついているTodoを削除できる
 	UserId    uint      `json:"user_id" gorm:"not null"`
+	Tags      []Tag     `json:"tags" gorm:"many2many:todo_tags"`
 }
 
 type TodoResponse struct {
