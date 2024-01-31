@@ -14,7 +14,9 @@
   "paths": {
     "/signup": {
       "post": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "ユーザー登録",
         "description": "signup user",
         "operationId": "signup",
@@ -23,7 +25,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": [
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "email": {
                     "type": "string"
@@ -41,7 +46,9 @@
             "description": "success",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UserResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
               }
             }
           },
@@ -74,13 +81,18 @@
       "post": {
         "description": "signin user",
         "summary": "ログイン",
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": [
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "email": {
                     "type": "string"
@@ -126,7 +138,9 @@
       "post": {
         "summary": "サインアウト",
         "description": "signout user",
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "responses": {
           "200": {
             "description": "Sign out successful"
@@ -138,7 +152,9 @@
       "get": {
         "summary": "トークン取得",
         "description": "Endpoint to get CSRF token",
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "responses": {
           "200": {
             "description": "CSRF token retrieved successfully",
@@ -146,13 +162,17 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["csrf_token"],
+                  "required": [
+                    "csrf_token"
+                  ],
                   "properties": {
                     "csrf_token": {
                       "type": "string"
                     }
                   },
-                  "example": { "csrf_token": "your_csrf_token" }
+                  "example": {
+                    "csrf_token": "your_csrf_token"
+                  }
                 }
               }
             }
@@ -162,7 +182,9 @@
     },
     "/todos": {
       "get": {
-        "tags": ["todos"],
+        "tags": [
+          "todos"
+        ],
         "summary": "全件取得",
         "description": "認証済みユーザーのtodoを全て取得する",
         "security": [
@@ -195,10 +217,13 @@
               }
             }
           }
-        }
+        },
+        "operationId": ""
       },
       "post": {
-        "tags": ["todos"],
+        "tags": [
+          "todos"
+        ],
         "summary": "Create a new todo",
         "description": "Create a new todo for the authenticated user",
         "security": [
@@ -211,7 +236,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title"],
+                "required": [
+                  "title"
+                ],
                 "properties": {
                   "title": {
                     "type": "string",
@@ -260,7 +287,9 @@
     },
     "/todos/{todoId}": {
       "get": {
-        "tags": ["todos"],
+        "tags": [
+          "todos"
+        ],
         "summary": "Get todo by ID",
         "description": "Get a specific todo by its ID for the authenticated user",
         "security": [
@@ -304,7 +333,9 @@
         }
       },
       "put": {
-        "tags": ["todos"],
+        "tags": [
+          "todos"
+        ],
         "summary": "Update todo by ID",
         "description": "Update a specific todo by its ID for the authenticated user",
         "security": [
@@ -328,9 +359,14 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title"],
+                "required": [
+                  "title"
+                ],
                 "properties": {
-                  "title": { "type": "string", "example": "updated title" }
+                  "title": {
+                    "type": "string",
+                    "example": "updated title"
+                  }
                 }
               }
             }
@@ -372,7 +408,9 @@
         }
       },
       "delete": {
-        "tags": ["todos"],
+        "tags": [
+          "todos"
+        ],
         "summary": "Delete todo by ID",
         "description": "Delete a specific todo by its ID for the authenticated user",
         "security": [
@@ -421,7 +459,12 @@
     "schemas": {
       "User": {
         "type": "object",
-        "required": ["id", "email", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "email",
+          "created_at",
+          "updated_at"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -443,7 +486,10 @@
       },
       "UserResponse": {
         "type": "object",
-        "required": ["id", "email"],
+        "required": [
+          "id",
+          "email"
+        ],
         "properties": {
           "id": {
             "type": "integer"
@@ -485,27 +531,83 @@
           "user_id": {
             "type": "integer",
             "format": "int64"
+          },
+          "tags": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "12iz7saj2hugn"
+            },
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
           }
         }
       },
       "TodoResponse": {
         "type": "object",
-        "required": ["id", "title", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "title",
+          "tags"
+        ],
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "minimum": 0
           },
           "title": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "uptcbp635grtk"
+            },
+            "minItems": "",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          }
+        }
+      },
+      "Tag": {
+        "title": "Tag",
+        "x-stoplight": {
+          "id": "kghuiyoezrpwc"
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "obuv93rbmkmbg"
+            }
+          },
+          "name": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "pkip3qpazh7m1"
+            }
+          },
           "created_at": {
             "type": "string",
-            "format": "date-time"
+            "x-stoplight": {
+              "id": "cct1w65n8lcxl"
+            }
           },
           "updated_at": {
             "type": "string",
-            "format": "date-time"
+            "x-stoplight": {
+              "id": "9v0mcvod3hpm2"
+            }
           }
         }
       }
