@@ -350,6 +350,15 @@
                   "title": {
                     "type": "string",
                     "example": "updated title"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "x-stoplight": {
+                      "id": "8jyfj2coe4xhq"
+                    },
+                    "items": {
+                      "$ref": "#/components/schemas/Tag"
+                    }
                   }
                 }
               }
