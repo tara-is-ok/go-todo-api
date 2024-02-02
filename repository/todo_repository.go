@@ -46,7 +46,7 @@ func (tr *todoRepository) CreateTodo(todo *models.Todo) error {
 }
 
 func (tr *todoRepository) UpdateTodo(todo *models.Todo, userId uint, todoId uint) error {
-	result := tr.db.Model(todo).Clauses(clause.Returning{}).Where("id=? AND user_id=?", todoId, userId).Update("title", todo.Title).Preload("Tags").Find(todo)
+	result := tr.db.Model(todo).Clauses(clause.Returning{}).Where("id=? AND user_id=?", todoId, userId).Update("title", todo.Title)
 	if result.Error != nil {
 		return result.Error
 	}
