@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"go-todo-api/models"
 	"go-todo-api/repository"
 	"go-todo-api/validator"
@@ -76,6 +77,7 @@ func (tu *todoUsecase) CreateTodo(todo models.Todo) (models.TodoResponse, error)
 }
 
 func (tu *todoUsecase) UpdateTodo(todo models.Todo, userId uint, todoId uint) (models.TodoResponse, error) {
+	fmt.Println("ユースケースにきた時", todo.Tags)
 	if err := tu.tr.UpdateTodo(&todo, userId, todoId); err != nil {
 		return models.TodoResponse{}, err
 	}
