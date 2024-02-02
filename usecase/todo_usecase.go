@@ -6,9 +6,8 @@ import (
 	"go-todo-api/validator"
 )
 
-
 type ITodoUsecase interface {
-	GetAllTodos(userId uint) ([]models.TodoResponse,error)
+	GetAllTodos(userId uint) ([]models.TodoResponse, error)
 	GetTodoById(userId uint, todoId uint) (models.TodoResponse, error)
 	CreateTodo(todo models.Todo) (models.TodoResponse, error)
 	UpdateTodo(todo models.Todo, userId uint, todoId uint) (models.TodoResponse, error)
@@ -32,31 +31,33 @@ func (tu *todoUsecase) GetAllTodos(userId uint) ([]models.TodoResponse, error) {
 	resTodos := []models.TodoResponse{}
 	for _, v := range todos {
 		t := models.TodoResponse{
-			ID: v.ID,
-			Title: v.Title,
+			ID:        v.ID,
+			Title:     v.Title,
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
+			Tags:      v.Tags,
 		}
 		resTodos = append(resTodos, t)
 	}
 	return resTodos, nil
 }
 
-func (tu *todoUsecase) GetTodoById(userId uint, todoId uint) (models.TodoResponse, error){
+func (tu *todoUsecase) GetTodoById(userId uint, todoId uint) (models.TodoResponse, error) {
 	todo := models.Todo{}
-	if err := tu.tr.GetTodoById(&todo, userId, todoId); err != nil{
+	if err := tu.tr.GetTodoById(&todo, userId, todoId); err != nil {
 		return models.TodoResponse{}, err
 	}
 	resTodo := models.TodoResponse{
-		ID: todo.ID,
-		Title: todo.Title,
+		ID:        todo.ID,
+		Title:     todo.Title,
 		CreatedAt: todo.CreatedAt,
 		UpdatedAt: todo.UpdatedAt,
+		Tags:      todo.Tags,
 	}
 	return resTodo, nil
 }
 
-func (tu *todoUsecase) CreateTodo(todo models.Todo) (models.TodoResponse, error){
+func (tu *todoUsecase) CreateTodo(todo models.Todo) (models.TodoResponse, error) {
 	if err := tu.tv.TodoValidate(todo); err != nil {
 		return models.TodoResponse{}, err
 	}
@@ -65,30 +66,31 @@ func (tu *todoUsecase) CreateTodo(todo models.Todo) (models.TodoResponse, error)
 		return models.TodoResponse{}, err
 	}
 	resTodo := models.TodoResponse{
-		ID: todo.ID,
-		Title: todo.Title,
+		ID:        todo.ID,
+		Title:     todo.Title,
 		CreatedAt: todo.CreatedAt,
 		UpdatedAt: todo.UpdatedAt,
+		Tags:      todo.Tags,
 	}
 	return resTodo, nil
 }
 
-func (tu *todoUsecase) UpdateTodo(todo models.Todo, userId uint,  todoId uint) (models.TodoResponse, error) {
+func (tu *todoUsecase) UpdateTodo(todo models.Todo, userId uint, todoId uint) (models.TodoResponse, error) {
 	if err := tu.tr.UpdateTodo(&todo, userId, todoId); err != nil {
 		return models.TodoResponse{}, err
 	}
 	resTodo := models.TodoResponse{
-		ID: todo.ID,
-		Title: todo.Title,
+		ID:        todo.ID,
+		Title:     todo.Title,
 		CreatedAt: todo.CreatedAt,
 		UpdatedAt: todo.UpdatedAt,
+		Tags:      todo.Tags,
 	}
 	return resTodo, nil
 }
 
-
 func (tu *todoUsecase) DeleteTodo(userId uint, todoId uint) error {
-	if err := tu.tr.DeleteTodo(userId, todoId); err != nil{
+	if err := tu.tr.DeleteTodo(userId, todoId); err != nil {
 		return err
 	}
 	return nil

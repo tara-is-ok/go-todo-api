@@ -20,19 +20,19 @@ type todoRepository struct {
 	db *gorm.DB
 }
 
-func NewTodoRepository(db *gorm.DB) ITodoRepository{
+func NewTodoRepository(db *gorm.DB) ITodoRepository {
 	return &todoRepository{db}
 }
 
 func (tr *todoRepository) GetAllTodos(todos *[]models.Todo, userId uint) error {
-	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(todos).Error; err != nil{
+	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(todos).Preload("Tags").Find(todos).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (tr *todoRepository) GetTodoById(todo *models.Todo, userId uint, todoId uint) error{
-	if err := tr.db.Joins("User").Where("user_id=?", userId).First(todo, todoId).Error; err != nil{
+func (tr *todoRepository) GetTodoById(todo *models.Todo, userId uint, todoId uint) error {
+	if err := tr.db.Joins("User").Where("user_id=?", userId).First(todo, todoId).Preload("Tags").Find(todo).Error; err != nil {
 		return err
 	}
 	return nil
@@ -45,8 +45,8 @@ func (tr *todoRepository) CreateTodo(todo *models.Todo) error {
 	return nil
 }
 
-func (tr *todoRepository) UpdateTodo(todo * models.Todo, userId uint, todoId uint) error {
-	result := tr.db.Model(todo).Clauses(clause.Returning{}).Where("id=? AND user_id=?",todoId, userId).Update("title", todo.Title)
+func (tr *todoRepository) UpdateTodo(todo *models.Todo, userId uint, todoId uint) error {
+	result := tr.db.Model(todo).Clauses(clause.Returning{}).Where("id=? AND user_id=?", todoId, userId).Update("title", todo.Title).Preload("Tags").Find(todo)
 	if result.Error != nil {
 		return result.Error
 	}

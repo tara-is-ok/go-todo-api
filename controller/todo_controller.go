@@ -10,19 +10,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type  ITodoController interface {
+type ITodoController interface {
 	GetAllTodos(c echo.Context) error
 	GetTodoById(c echo.Context) error
-	CreateTodo(c echo.Context)error
-	UpdateTodo(c echo.Context)error
-	DeleteTodo(c echo.Context)error
+	CreateTodo(c echo.Context) error
+	UpdateTodo(c echo.Context) error
+	DeleteTodo(c echo.Context) error
 }
 
 type todoController struct {
 	tu usecase.ITodoUsecase
 }
 
-func NewTodoController(tu usecase.ITodoUsecase) ITodoController{
+func NewTodoController(tu usecase.ITodoUsecase) ITodoController {
 	return &todoController{tu}
 }
 
@@ -57,11 +57,33 @@ func (tc *todoController) CreateTodo(c echo.Context) error {
 	claims := user.Claims.(jwt.MapClaims)
 	userId := claims["user_id"]
 
-	todo := models.Todo{}
-	//request bodyをtodo structに代入
-	if err := c.Bind(&todo); err != nil {
+	// リクエストボディを一度マップにバインド
+	var requestBody map[string]interface{}
+	if err := c.Bind(&requestBody); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
+	tagsBody, ok := requestBody["tags"].([]interface{})
+	if !ok {
+		return c.JSON(http.StatusBadRequest, "tags must be array type")
+	}
+	var tags []models.Tag
+	for _, tag := range tagsBody {
+		tagName, ok := tag.(string)
+		if !ok {
+			return c.JSON(http.StatusBadRequest, "tag must be string type")
+		}
+		tagStruct := models.Tag{
+			Name: tagName,
+		}
+		tags = append(tags, tagStruct)
+	}
+
+	todo := models.Todo{}
+	todo.Title, ok = requestBody["title"].(string)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, "title is required")
+	}
+	todo.Tags = tags
 	todo.UserId = uint(userId.(float64))
 	todoRes, err := tc.tu.CreateTodo(todo)
 	if err != nil {
@@ -70,14 +92,13 @@ func (tc *todoController) CreateTodo(c echo.Context) error {
 	return c.JSON(http.StatusCreated, todoRes)
 }
 
-func (tc *todoController) UpdateTodo(c echo.Context)error {
+func (tc *todoController) UpdateTodo(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	userId := claims["user_id"]
 	id := c.Param("todoId")
 	todoId, _ := strconv.Atoi(id)
-
-	todo := models.Todo{}	
+	todo := models.Todo{}
 	if err := c.Bind(&todo); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
