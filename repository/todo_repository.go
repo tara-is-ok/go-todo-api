@@ -46,11 +46,8 @@ func (tr *todoRepository) CreateTodo(todo *models.Todo) error {
 }
 
 func (tr *todoRepository) UpdateTodo(todo *models.Todo, userId uint, todoId uint) error {
-	fmt.Println("渡ってきた時", todo.Tags)
 	result := tr.db.Model(todo).Clauses(clause.Returning{}).Where("id=? AND user_id=?", todoId, userId).Updates(models.Todo{Title: todo.Title, Tags: todo.Tags})
-	fmt.Println("Updateあと", todo.Tags)
 	tr.db.Model(todo).Association("Tags").Replace(todo.Tags)
-	fmt.Println("アソシエーション後", todo.Tags)
 	if result.Error != nil {
 		return result.Error
 	}
