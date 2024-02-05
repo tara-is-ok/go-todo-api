@@ -30,7 +30,14 @@ func (tc *todoController) GetAllTodos(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	userId := claims["user_id"]
-
+	tags := c.QueryParams()["tag"]
+	if len(tags) != 0 {
+		todosRes, err := tc.tu.GetTodosByTags(tags)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSON(http.StatusOK, todosRes)
+	}
 	//userIdがanyのため型変換を行う
 	todosRes, err := tc.tu.GetAllTodos(uint(userId.(float64)))
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 
 type ITodoRepository interface {
 	GetAllTodos(todos *[]models.Todo, userId uint) error
+	GetTodosByTags(todos *[]models.Todo, tags []string) error
 	GetTodoById(todo *models.Todo, userId uint, todoId uint) error
 	CreateTodo(todo *models.Todo) error
 	UpdateTodo(todo *models.Todo, userId uint, todoId uint) error
@@ -26,6 +27,13 @@ func NewTodoRepository(db *gorm.DB) ITodoRepository {
 
 func (tr *todoRepository) GetAllTodos(todos *[]models.Todo, userId uint) error {
 	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(todos).Preload("Tags").Find(todos).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (tr *todoRepository) GetTodosByTags(todos *[]models.Todo, tags []string) error {
+	if err := tr.db.Find(todos).Preload("Tags").Find(todos).Where("name IN ?", tags).Error; err != nil {
 		return err
 	}
 	return nil
