@@ -33,7 +33,12 @@ func (tr *todoRepository) GetAllTodos(todos *[]models.Todo, userId uint) error {
 }
 
 func (tr *todoRepository) GetTodosByTags(todos *[]models.Todo, tags []string) error {
-	if err := tr.db.Find(todos).Preload("Tags").Find(todos).Where("name IN ?", tags).Error; err != nil {
+	if err := tr.db.
+		Joins("JOIN todo_tags ON todos.id = todo_tags.todo_id").
+		Joins("JOIN tags ON todo_tags.tag_id = tags.id").
+		Where("tags.name IN (?)", tags).
+		Preload("Tags").
+		Find(todos).Error; err != nil {
 		return err
 	}
 	return nil
