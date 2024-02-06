@@ -66,12 +66,23 @@ func (tr *todoRepository) UpdateTodo(todo *models.Todo, userId uint, todoId uint
 }
 
 func (tr *todoRepository) DeleteTodo(userId uint, todoId uint) error {
-	result := tr.db.Where("id=? AND user_id=?", todoId, userId).Delete(&models.Todo{})
+	todo := &models.Todo{}
+	result := tr.db.Preload("Tags").Where("id=? AND user_id=?", todoId, userId).First(todo)
 	if result.Error != nil {
 		return result.Error
 	}
 	if result.RowsAffected < 1 {
 		return fmt.Errorf("object does not exist")
 	}
+
+	for _, tag := range todo.Tags {
+		tr.db.Model(todo).Association("Tags").Delete(tag)
+	}
+
+	result = tr.db.Delete(todo)
+	if result.Error != nil {
+		return result.Error
+	}
+
 	return nil
 }
